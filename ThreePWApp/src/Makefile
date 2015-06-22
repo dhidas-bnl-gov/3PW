@@ -24,7 +24,6 @@ PROD_IOC = ThreePW
 DBD += ThreePW.dbd
 
 # ThreePW.dbd will be made up from these files:
-ThreePW_DBD += base.dbd
 #ThreePW_DBD += pmacUtilSupport.dbd
 #ThreePW_DBD += errorHandling.dbd
 #ThreePW_DBD += lookupTables.dbd
@@ -35,18 +34,19 @@ ThreePW_DBD += base.dbd
 #ThreePW_DBD += epsilon.dbd
 #ThreePW_DBD += beckhoff.dbd
 
+ThreePW_DBD += base.dbd
 ThreePW_DBD += asyn.dbd
-#ThreePW_DBD += motorSupport.dbd
-#ThreePW_DBD += motorSimSupport.dbd
-#ThreePW_DBD += devSoftMotor.dbd
 ThreePW_DBD += stream.dbd
 ThreePW_DBD += pmacAsynMotor.dbd
 ThreePW_DBD += pmacAsynIPPort.dbd
 ThreePW_DBD += pmacAsynCoord.dbd
-#ThreePW_DBD += sCalcoutRecord.dbd
-#ThreePW_DBD += busyRecord.dbd
-#ThreePW_DBD += dbCommon.dbd
 
+#ThreePW_DBD += sCalcoutRecord.dbd
+ThreePW_DBD += busyRecord.dbd
+#ThreePW_DBD += dbCommon.dbd
+ThreePW_DBD += motorSupport.dbd
+#ThreePW_DBD += motorSimSupport.dbd
+ThreePW_DBD += devSoftMotor.dbd
 #ThreePW_DBD += system.dbd
 #ThreePW_DBD += devIocStats.dbd
 #ThreePW_DBD += asSupport.dbd
@@ -63,7 +63,7 @@ ThreePW_SRCS_vxWorks += -nil-
 # Link in the code from the support library
 ThreePW_LIBS += asyn
 ThreePW_LIBS += motor
-#ThreePW_LIBS += softMotor
+ThreePW_LIBS += softMotor
 #ThreePW_LIBS += motorSimSupport
 ThreePW_LIBS += pmacAsynCoord
 ThreePW_LIBS += pmacAsynIPPort
@@ -71,8 +71,8 @@ ThreePW_LIBS += pmacAsynMotor
 ThreePW_LIBS += stream
 #ThreePW_LIBS += calc
 #ThreePW_LIBS += autosave
-#ThreePW_LIBS += busy
-#ThreePW_LIBS += seq pv
+ThreePW_LIBS += busy
+ThreePW_LIBS += seq pv
 
 #ThreePW_LIBS += devIocStats
 #ThreePW_LIBS += caPutLog
