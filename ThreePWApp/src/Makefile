@@ -40,6 +40,7 @@ ThreePW_DBD += stream.dbd
 ThreePW_DBD += pmacAsynMotor.dbd
 ThreePW_DBD += pmacAsynIPPort.dbd
 ThreePW_DBD += pmacAsynCoord.dbd
+ThreePW_DBD += calcSupport.dbd
 
 #ThreePW_DBD += sCalcoutRecord.dbd
 ThreePW_DBD += busyRecord.dbd
@@ -69,7 +70,7 @@ ThreePW_LIBS += pmacAsynCoord
 ThreePW_LIBS += pmacAsynIPPort
 ThreePW_LIBS += pmacAsynMotor
 ThreePW_LIBS += stream
-#ThreePW_LIBS += calc
+ThreePW_LIBS += calc
 #ThreePW_LIBS += autosave
 ThreePW_LIBS += busy
 ThreePW_LIBS += seq pv

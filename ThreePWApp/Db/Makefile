@@ -7,9 +7,12 @@ include $(TOP)/configure/CONFIG
 #  Optimization of db files using dbst (DEFAULT: NO)
 #DB_OPT = YES
 
+
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatus.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatusAxis.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmac_asyn_motor.db
+DB_INSTALLS += $(EPICS_BASE)/db/motor.db
+DB_INSTALLS += $(EPICS_BASE)/db/motorstatus.db
 
 #----------------------------------------------------
 # Create and install (or just install)
