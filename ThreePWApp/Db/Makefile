@@ -8,11 +8,13 @@ include $(TOP)/configure/CONFIG
 #DB_OPT = YES
 
 
+DB_INSTALLS += motor.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatus.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatusAxis.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmac_asyn_motor.db
 DB_INSTALLS += $(EPICS_BASE)/db/motorstatus.db
-DB_INSTALLS += motor.db
+DB_INSTALLS += $(EPICS_BASE)/db/asynRecord.db
+DB_INSTALLS += $(EPICS_BASE)/db/iocAdminSoft.db
 
 #----------------------------------------------------
 # Create and install (or just install)

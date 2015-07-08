@@ -36,18 +36,51 @@ DBD += ThreePW.dbd
 
 ThreePW_DBD += base.dbd
 ThreePW_DBD += asyn.dbd
-ThreePW_DBD += stream.dbd
+ThreePW_DBD += motorSupport.dbd
+ThreePW_DBD += drvAsynIPPort.dbd
+ThreePW_DBD += drvAsynSerialPort.dbd
+ThreePW_DBD += pmacAsynMotorPort.dbd
 ThreePW_DBD += pmacAsynMotor.dbd
 ThreePW_DBD += pmacAsynIPPort.dbd
 ThreePW_DBD += pmacAsynCoord.dbd
+ThreePW_DBD += asSupport.dbd
+ThreePW_DBD += busySupport.dbd
 ThreePW_DBD += calcSupport.dbd
+ThreePW_DBD += system.dbd
+ThreePW_DBD += stream.dbd
+ThreePW_DBD += devIocStats.dbd
+
+
+ThreePW_LIBS += pmacAsynMotorPort
+ThreePW_LIBS += pmacAsynIPPort
+ThreePW_LIBS += pmacAsynCoord
+ThreePW_LIBS += motor
+ThreePW_LIBS += asyn
+ThreePW_LIBS += autosave
+ThreePW_LIBS += busy
+ThreePW_LIBS += calc
+ThreePW_LIBS += stream
+ThreePW_LIBS += devIocStats
+ThreePW_LIBS += pmacAsynMotor
+
+#ThreePW_LIBS += softMotor
+#ThreePW_LIBS += motorSimSupport
+#ThreePW_LIBS += pmacAsynMotor
+#ThreePW_LIBS += seq pv
+
+
+#ThreePW_DBD += stream.dbd
+#ThreePW_DBD += pmacAsynMotor.dbd
+#ThreePW_DBD += pmacAsynIPPort.dbd
+#ThreePW_DBD += pmacAsynCoord.dbd
+#ThreePW_DBD += calcSupport.dbd
 
 #ThreePW_DBD += sCalcoutRecord.dbd
-ThreePW_DBD += busyRecord.dbd
+#ThreePW_DBD += busyRecord.dbd
 #ThreePW_DBD += dbCommon.dbd
-ThreePW_DBD += motorSupport.dbd
+#ThreePW_DBD += motorSupport.dbd
 #ThreePW_DBD += motorSimSupport.dbd
-ThreePW_DBD += devSoftMotor.dbd
+#ThreePW_DBD += devSoftMotor.dbd
 #ThreePW_DBD += system.dbd
 #ThreePW_DBD += devIocStats.dbd
 #ThreePW_DBD += asSupport.dbd
@@ -62,18 +95,18 @@ ThreePW_SRCS_vxWorks += -nil-
 
 
 # Link in the code from the support library
-ThreePW_LIBS += asyn
-ThreePW_LIBS += motor
-ThreePW_LIBS += softMotor
+#ThreePW_LIBS += asyn
+#ThreePW_LIBS += motor
+#ThreePW_LIBS += softMotor
 #ThreePW_LIBS += motorSimSupport
-ThreePW_LIBS += pmacAsynCoord
-ThreePW_LIBS += pmacAsynIPPort
-ThreePW_LIBS += pmacAsynMotor
-ThreePW_LIBS += stream
-ThreePW_LIBS += calc
+#ThreePW_LIBS += pmacAsynCoord
+#ThreePW_LIBS += pmacAsynIPPort
+#ThreePW_LIBS += pmacAsynMotor
+#ThreePW_LIBS += stream
+#ThreePW_LIBS += calc
 #ThreePW_LIBS += autosave
-ThreePW_LIBS += busy
-ThreePW_LIBS += seq pv
+#ThreePW_LIBS += busy
+#ThreePW_LIBS += seq pv
 
 #ThreePW_LIBS += devIocStats
 #ThreePW_LIBS += caPutLog
