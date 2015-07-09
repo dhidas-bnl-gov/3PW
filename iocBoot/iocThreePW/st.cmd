@@ -18,48 +18,16 @@ epicsEnvSet ("STREAM_PROTOCOL_PATH", "${TOP}/protocols")
 dbLoadDatabase("dbd/ThreePW.dbd")
 ThreePW_registerRecordDeviceDriver pdbbase
 
-
-
-# TCP/IP conection for Motor Controller
-#pmacAsynIPConfigure("P0", $(PMAC1_IP))
-#pmacCreateController("M0", "P0", 0, 1, 100, 1000)
-#pmacCreateAxis("M0", 1)
-#pmacSetAxisScale("M0", 1, 1)
-
-#pmacAsynMotorCreate("P0", 0, 0, 1)
-#drvAsynMotorConfigure("M0", "pmacAsynMotor", 0, 2)
-#pmacAsynCoordCreate("P0", 0, 2, 12, 10)
-
-#pmacSetIdlePollPeriod(0, 500)
-#pmacSetMovingPollPeriod(0, 200)
-
-
-
-## Load record instances
-#dbLoadRecords("db/motor.db","P=$(sys),M={$(dev)},MOTOR=M0,PORT=P0,ADDR=1,DTYP=asynMotor")
-#dbLoadRecords("db/motorstatus.db","SYS=$(sys),DEV={$(dev)},PORT=P0,AXIS=1")
-#dbLoadRecords("db/pmacStatus.db","SYS=$(sys),PMAC=$(dev),VERSION=1,PLC=5,NAXES=1,PORT=P0")
-#dbLoadRecords("db/pmacStatusAxis.db","SYS=$(sys),DEV={$(dev)},AXIS=1,PORT=P0")
-#dbLoadRecords("db/pmac_asyn_motor.db","SYS=$(sys),DEV={$(dev)},SPORT=P0")
-
-
-
 pmacAsynIPConfigure("P0", $(PMAC1_IP))
-#pmacCreateController("M0", "P0", 0, 1, 100, 1000)
-#pmacCreateAxis("M0", 1)
-#pmacSetAxisScale("M0", 1, 1)
-#pmacAsynCoordCreate("P0", 0, 1, 1, 10)
-pmacAsynMotorCreate("P0", 0, 0, 1)
-drvAsynMotorConfigure("pmac0", "pmacAsynMotor", 1, 2)
+pmacCreateController("PMAC1", "P0", 0, 1, 50, 500)
+pmacCreateAxis("PMAC1", 1)
+dbLoadRecords("db/motor.db","P=$(sys),M={$(dev)-Mtr1},MOTOR=PMAC1,ADDR=1,DESC=asd,DTYP=asynMotor")
+dbLoadRecords("db/motorstatus.db","SYS=B$(sys),DEV={$(dev)-Mtr1},PORT=P0,AXIS=1")
 
-#dbLoadRecords("db/asynRecord.db","P=D$(sys),R={$(dev)},PORT=P0,ADDR=0")
-#dbLoadRecords("db/motor.db","P=$(sys),M={$(dev)},MOTOR=M0,PORT=P0,ADDR=1,DTYP=asynMotor")
-#dbLoadRecords("db/motorstatus.db","SYS=A$(sys),DEV={$(dev)},PORT=P0,AXIS=1")
-#dbLoadRecords("db/pmacStatus.db","SYS=B$(sys),PMAC=$(dev),VERSION=1,PLC=5,NAXES=1,PORT=P0")
-#dbLoadRecords("db/pmac_asyn_motor.db","SYS=C$(sys),DEV={$(dev)},SPORT=P0")
-
-
-dbLoadRecords("db/pmacStatusAxis.db","SYS=DD$(sys),DEV={$(dev)},AXIS=1,PORT=P0")
+dbLoadRecords("db/pmacStatus.db","SYS=C$(sys),PMAC=$(dev)-PMAC1,VERSION=1,PLC=5,NAXES=1,PORT=P0")
+dbLoadRecords("db/pmac_asyn_motor.db","SYS=D$(sys),DEV={$(dev)-Mtr1},ADDR=1,SPORT=P0,DESC=asd,PREC=5,EGU=cts")
+dbLoadRecords("db/pmacStatusAxis.db","SYS=E$(sys),DEV={$(dev)-Mtr1},AXIS=1,PORT=P0")
+dbLoadRecords("db/asynRecord.db","P=F$(sys),R={$(dev)-PMAC1},ADDR=1,PORT=P0,IMAX=128,OMAX=128")
 
 
 
@@ -67,4 +35,4 @@ dbLoadRecords("db/pmacStatusAxis.db","SYS=DD$(sys),DEV={$(dev)},AXIS=1,PORT=P0")
 
 cd ${TOP}/iocBoot/${IOC}
 iocInit
-#exit
+
