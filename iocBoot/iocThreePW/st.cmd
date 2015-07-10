@@ -22,12 +22,12 @@ pmacAsynIPConfigure("P0", $(PMAC1_IP))
 pmacCreateController("PMAC1", "P0", 0, 1, 50, 500)
 pmacCreateAxis("PMAC1", 1)
 dbLoadRecords("db/motor.db","P=$(sys),M={$(dev)-Mtr1},MOTOR=PMAC1,ADDR=1,DESC=asd,DTYP=asynMotor")
-dbLoadRecords("db/motorstatus.db","SYS=B$(sys),DEV={$(dev)-Mtr1},PORT=P0,AXIS=1")
+dbLoadRecords("db/motorstatus.db","SYS=$(sys),DEV={$(dev)-Mtr1},PORT=P0,AXIS=1")
 
-dbLoadRecords("db/pmacStatus.db","SYS=C$(sys),PMAC=$(dev)-PMAC1,VERSION=1,PLC=5,NAXES=1,PORT=P0")
-dbLoadRecords("db/pmac_asyn_motor.db","SYS=D$(sys),DEV={$(dev)-Mtr1},ADDR=1,SPORT=P0,DESC=asd,PREC=5,EGU=cts")
-dbLoadRecords("db/pmacStatusAxis.db","SYS=E$(sys),DEV={$(dev)-Mtr1},AXIS=1,PORT=P0")
-dbLoadRecords("db/asynRecord.db","P=F$(sys),R={$(dev)-PMAC1},ADDR=1,PORT=P0,IMAX=128,OMAX=128")
+dbLoadRecords("db/pmacStatus.db","SYS=$(sys),PMAC=$(dev),VERSION=1,PLC=5,NAXES=1,PORT=P0")
+dbLoadRecords("db/pmac_asyn_motor.db","SYS=$(sys),DEV={$(dev)-Mtr1},ADDR=1,SPORT=P0,DESC=asd,PREC=5,EGU=cts")
+dbLoadRecords("db/pmacStatusAxis.db","SYS=$(sys),DEV={$(dev)-Ax:1},AXIS=1,PORT=P0")
+dbLoadRecords("db/asynRecord.db","P=$(sys),R={$(dev)},ADDR=1,PORT=P0,IMAX=128,OMAX=128")
 
 
 
