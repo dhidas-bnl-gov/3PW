@@ -21,6 +21,8 @@ ThreePW_registerRecordDeviceDriver pdbbase
 pmacAsynIPConfigure("P0", $(PMAC1_IP))
 pmacCreateController("PMAC1", "P0", 0, 1, 50, 500)
 pmacCreateAxis("PMAC1", 1)
+dbLoadRecords("db/ThreePW.db","SYS=$(sys),DEV=$(dev),PORT=P0")
+
 dbLoadRecords("db/motor.db","P=$(sys),M={$(dev)-Mtr1},MOTOR=PMAC1,ADDR=1,DESC=asd,DTYP=asynMotor")
 dbLoadRecords("db/motorstatus.db","SYS=$(sys),DEV={$(dev)-Mtr1},PORT=P0,AXIS=1")
 

@@ -8,6 +8,7 @@ include $(TOP)/configure/CONFIG
 #DB_OPT = YES
 
 
+DB_INSTALLS += ThreePW.db
 DB_INSTALLS += motor.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatus.db
 DB_INSTALLS += $(EPICS_BASE)/db/pmacStatusAxis.db
@@ -19,7 +20,7 @@ DB_INSTALLS += $(EPICS_BASE)/db/iocAdminSoft.db
 #----------------------------------------------------
 # Create and install (or just install)
 # databases, templates, substitutions like this
-#DB += motorstatus.db
+#DB += somedb.db
 
 #----------------------------------------------------
 # If <anyname>.db template is not named <anyname>*.template add
