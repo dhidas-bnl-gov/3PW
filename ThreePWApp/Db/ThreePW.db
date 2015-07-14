@@ -1,42 +1,57 @@
+
+
+
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch1") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M1) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch2") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M2) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch3") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M3) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch4") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M4) $(PORT)")
 }
 
 
 record(ai, "$(SYS){$(DEV)}EncoderLoss") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(P2001) $(PORT)")
 }
 
+record(ai, "$(SYS){$(DEV)}EncoderLossOverride2") {
+  field(DTYP, "stream")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getVar(P2000) $(PORT)")
+}
 record(ai, "$(SYS){$(DEV)}EncoderLossOverride") {
   field(DTYP, "stream")
-  field(INP, "@pmac.proto getVar(P2000) $(PORT)")
+  field(INP, "@pmac.proto setVar(P2000,1) $(PORT)")
 }
 
 
 record(ai, "$(SYS){$(DEV)}InSwitch1") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M5) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}InSwitch2") {
   field(DTYP, "stream")
+  field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M6) $(PORT)")
 }
 
@@ -45,9 +60,10 @@ record(calc, "$(SYS){$(DEV)}InSwitch") {
 
 
 
-record(ai, "$(SYS){$(DEV)}Mtr1EncLossIgnore") {
+record(ai, "$(SYS){$(DEV)}Home") {
   field(DTYP, "stream")
-  field(INP, "@pmac.proto getVar(P1081) $(PORT)")
+  field(PROC, 1)
+  field(INP, "@pmac.proto sendString(enableplc10) $(PORT)")
 }
 
 

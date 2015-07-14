@@ -18,21 +18,12 @@ epicsEnvSet ("STREAM_PROTOCOL_PATH", "${TOP}/protocols")
 dbLoadDatabase("dbd/ThreePW.dbd")
 ThreePW_registerRecordDeviceDriver pdbbase
 
-
-
-
-
-
-
-
-
-
-
 pmacAsynIPConfigure("P0", $(PMAC1_IP))
 pmacAsynMotorCreate("P0", 0, 0, 1)
-drvAsynMotorConfigure("PMAC1", "pmacAsynMotor", 1, 2)
+drvAsynMotorConfigure("PMAC1", "pmacAsynMotor", 0, 2)
 pmacSetIdlePollPeriod(0, 500)
 pmacSetMovingPollPeriod(0, 200)
+dbLoadRecords("db/pmac_asyn_motor.db","SYS=$(sys),DEV={$(dev)},SPORT=P0")
 dbLoadRecords("db/pmacStatusAxis.db","SYS=$(sys),DEV={$(dev)},AXIS=1,PORT=P0")
 
 
@@ -41,4 +32,4 @@ dbLoadRecords("db/pmacStatusAxis.db","SYS=$(sys),DEV={$(dev)},AXIS=1,PORT=P0")
 
 cd ${TOP}/iocBoot/${IOC}
 iocInit
-#exit
+exit
