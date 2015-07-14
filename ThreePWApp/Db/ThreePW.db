@@ -19,6 +19,16 @@ record(ai, "$(SYS){$(DEV)}BeamPipeSwitch4") {
 }
 
 
+record(ai, "$(SYS){$(DEV)}EncoderLoss") {
+  field(DTYP, "stream")
+  field(INP, "@pmac.proto getVar(P2001) $(PORT)")
+}
+
+record(ai, "$(SYS){$(DEV)}EncoderLossOverride") {
+  field(DTYP, "stream")
+  field(INP, "@pmac.proto getVar(P2000) $(PORT)")
+}
+
 
 record(ai, "$(SYS){$(DEV)}InSwitch1") {
   field(DTYP, "stream")
