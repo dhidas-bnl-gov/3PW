@@ -1,3 +1,6 @@
+
+
+
 record(ai, "$(SYS){$(DEV)}InpPos") {
   field(OUT, "$(SYS){$(DEV)-Mtr1}")
   field(FLNK, "$(SYS){$(DEV)-Mtr1}")
@@ -8,45 +11,72 @@ record(ai, "$(SYS){$(DEV)}InpPos") {
 record(calc, "$(SYS){$(DEV)}HomeBit") {
   field(SCAN, "1 second")
   field(INPA, "$(SYS){$(DEV)-Ax:1}Sts:3-Sts")
-  field(CALC, "(A & 0x200) = 0x200")
+  field(CALC, "(A & 0x400) = 0x400")
+  field(FLNK, "$(SYS){$(DEV)}HomeBitNot")
 }
 
 
+record(calc, "$(SYS){$(DEV)}HomeBitNot") {
+  field(INPA, "$(SYS){$(DEV)}HomeBit")
+  field(CALC, "!A")
+}
+
+
+record(calc, "$(SYS){$(DEV)}BeamPipeHit1") {
+  field(INPA, "$(SYS){$(DEV)}BeamPipeSwitch1")
+  field(CALC, "!A")
+}
+
+record(calc, "$(SYS){$(DEV)}BeamPipeHit2") {
+  field(INPA, "$(SYS){$(DEV)}BeamPipeSwitch2")
+  field(CALC, "!A")
+}
+
+record(calc, "$(SYS){$(DEV)}BeamPipeHit3") {
+  field(INPA, "$(SYS){$(DEV)}BeamPipeSwitch3")
+  field(CALC, "!A")
+}
+
+record(calc, "$(SYS){$(DEV)}BeamPipeHit4") {
+  field(INPA, "$(SYS){$(DEV)}BeamPipeSwitch4")
+  field(CALC, "!A")
+}
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch1") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M6) $(PORT)")
-  field(FLNK, "$(SYS){$(DEV)}BeamPipeSwitchAny")
+  field(FLNK, "$(SYS){$(DEV)}BeamPipeHit1")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch2") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M4) $(PORT)")
-  field(FLNK, "$(SYS){$(DEV)}BeamPipeSwitchAny")
+  field(FLNK, "$(SYS){$(DEV)}BeamPipeHit2")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch3") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M5) $(PORT)")
-  field(FLNK, "$(SYS){$(DEV)}BeamPipeSwitchAny")
+  field(FLNK, "$(SYS){$(DEV)}BeamPipeHit3")
 }
 
 record(ai, "$(SYS){$(DEV)}BeamPipeSwitch4") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
   field(INP, "@pmac.proto getVar(M7) $(PORT)")
-  field(FLNK, "$(SYS){$(DEV)}BeamPipeSwitchAny")
+  field(FLNK, "$(SYS){$(DEV)}BeamPipeHit4")
 }
 
 record(calc, "$(SYS){$(DEV)}BeamPipeSwitchAny") {
+  field(SCAN, "1 second")
   field(INPA, "$(SYS){$(DEV)}BeamPipeSwitch1")
   field(INPB, "$(SYS){$(DEV)}BeamPipeSwitch2")
   field(INPC, "$(SYS){$(DEV)}BeamPipeSwitch3")
   field(INPD, "$(SYS){$(DEV)}BeamPipeSwitch4")
-  field(CALC, "A|B|C|D")
+  field(CALC, "!(A && B && C && D)")
 }
 
 
@@ -70,38 +100,40 @@ record(ai, "$(SYS){$(DEV)}EncoderLossOverride") {
 record(ai, "$(SYS){$(DEV)}InSwitch1") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(M5) $(PORT)")
+  field(INP, "@pmac.proto getVar(M1) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}InSwitch2") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(M6) $(PORT)")
+  field(INP, "@pmac.proto getVar(M0) $(PORT)")
 }
 
 record(calc, "$(SYS){$(DEV)}InSwitchAny") {
+  field(SCAN, "1 second")
   field(INPA, "$(SYS){$(DEV)}InSwitch1")
   field(INPB, "$(SYS){$(DEV)}InSwitch2")
-  field(CALC, "A|B")
+  field(CALC, "!(A && B)")
 }
 
 
 record(ai, "$(SYS){$(DEV)}OutSwitch1") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(M5) $(PORT)")
+  field(INP, "@pmac.proto getVar(M2) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}OutSwitch2") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(M6) $(PORT)")
+  field(INP, "@pmac.proto getVar(M3) $(PORT)")
 }
 
 record(calc, "$(SYS){$(DEV)}OutSwitchAny") {
+  field(SCAN, "1 second")
   field(INPA, "$(SYS){$(DEV)}OutSwitch1")
   field(INPB, "$(SYS){$(DEV)}OutSwitch2")
-  field(CALC, "A|B")
+  field(CALC, "!(A && B)")
 }
 
 
@@ -109,9 +141,23 @@ record(calc, "$(SYS){$(DEV)}OutSwitchAny") {
 record(ai, "$(SYS){$(DEV)}Home") {
   field(DTYP, "stream")
   field(PROC, 1)
-  field(VAL, "Enable PLC 10")
-  field(INP, "@pmac.proto sendString() $(PORT)")
+  //field(VAL, "Enable PLC 10")
+  field(INP, "@pmac.proto sendString(EnablePLC10) $(PORT)")
+}
+
+record(ai, "$(SYS){$(DEV)}PMACReset") {
+  field(DTYP, "stream")
+  field(PROC, 1)
+  //field(VAL, "$$$")
+  field(INP, "@pmac.proto sendString($$$) $(PORT)")
 }
 
 
+
+
+record(ao, "$(SYS){$(DEV)}PositionIN") {
+}
+
+record(ao, "$(SYS){$(DEV)}PositionOUT") {
+}
 
