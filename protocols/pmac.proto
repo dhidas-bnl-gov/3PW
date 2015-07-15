@@ -126,7 +126,7 @@ setHexVar
 
 sendString
 {
-  out "\$1" CR;
+  out "%s" CR;
   in;
 }
 
