@@ -1,7 +1,7 @@
 
 
 
-record(ai, "$(SYS){$(DEV)}InpPos") {
+record(ao, "$(SYS){$(DEV)}InpPos") {
   field(OUT, "$(SYS){$(DEV)-Mtr1}")
   field(FLNK, "$(SYS){$(DEV)-Mtr1}")
   field(SDIS, "$(SYS){$(DEV)}HomeBit")
