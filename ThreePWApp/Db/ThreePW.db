@@ -138,26 +138,46 @@ record(calc, "$(SYS){$(DEV)}OutSwitchAny") {
 
 
 
-record(ai, "$(SYS){$(DEV)}Home") {
+record(stringin, "$(SYS){$(DEV)}MoveIN") {
   field(DTYP, "stream")
   field(PROC, 1)
-  //field(VAL, "Enable PLC 10")
+  #field(VAL, "Enable PLC 7")
+  field(INP, "@pmac.proto sendString(EnablePLC7) $(PORT)")
+}
+
+record(stringin, "$(SYS){$(DEV)}MoveOUT") {
+  field(DTYP, "stream")
+  field(PROC, 1)
+  #field(VAL, "Enable PLC 6")
+  field(INP, "@pmac.proto sendString(EnablePLC6) $(PORT)")
+}
+
+record(stringin, "$(SYS){$(DEV)}Home") {
+  field(DTYP, "stream")
+  field(PROC, 1)
+  #field(VAL, "Enable PLC 10")
   field(INP, "@pmac.proto sendString(EnablePLC10) $(PORT)")
 }
 
-record(ai, "$(SYS){$(DEV)}PMACReset") {
+record(stringin, "$(SYS){$(DEV)}PMACReset") {
   field(DTYP, "stream")
   field(PROC, 1)
-  //field(VAL, "$$$")
+  #field(VAL, "$$$")
   field(INP, "@pmac.proto sendString($$$) $(PORT)")
 }
 
 
 
 
-record(ao, "$(SYS){$(DEV)}PositionIN") {
+record(ai, "$(SYS){$(DEV)}PositionIN") {
+  field(DTYP, "stream")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getVar(P600) $(PORT)")
 }
 
-record(ao, "$(SYS){$(DEV)}PositionOUT") {
+record(ai, "$(SYS){$(DEV)}PositionOUT") {
+  field(DTYP, "stream")
+  field(SCAN, "1 second")
+  field(INP, "@pmac.proto getVar(P700) $(PORT)")
 }
 
