@@ -1,14 +1,12 @@
 
-
-
 record(ao, "$(SYS){$(DEV)}InpPos") {
-  field(OUT, "$(SYS){$(DEV)-Mtr1}")
-  field(FLNK, "$(SYS){$(DEV)-Mtr1}")
   field(SDIS, "$(SYS){$(DEV)}HomeBit")
   field(DISV, "0")
+  field(OUT, "$(SYS){$(DEV)-Mtr1}.VAL PP")
 }
 
-record(calc, "$(SYS){$(DEV)}HomeBit") {
+
+record(calcout, "$(SYS){$(DEV)}HomeBit") {
   field(SCAN, "1 second")
   field(INPA, "$(SYS){$(DEV)-Ax:1}Sts:3-Sts")
   field(CALC, "(A & 0x400) = 0x400")
@@ -141,6 +139,8 @@ record(calc, "$(SYS){$(DEV)}OutSwitchAny") {
 record(stringin, "$(SYS){$(DEV)}MoveIN") {
   field(DTYP, "stream")
   field(PROC, 1)
+  field(SDIS, "$(SYS){$(DEV)}HomeBit")
+  field(DISV, "0")
   #field(VAL, "Enable PLC 7")
   field(INP, "@pmac.proto sendString(EnablePLC7) $(PORT)")
 }
@@ -148,6 +148,8 @@ record(stringin, "$(SYS){$(DEV)}MoveIN") {
 record(stringin, "$(SYS){$(DEV)}MoveOUT") {
   field(DTYP, "stream")
   field(PROC, 1)
+  field(SDIS, "$(SYS){$(DEV)}HomeBit")
+  field(DISV, "0")
   #field(VAL, "Enable PLC 6")
   field(INP, "@pmac.proto sendString(EnablePLC6) $(PORT)")
 }
