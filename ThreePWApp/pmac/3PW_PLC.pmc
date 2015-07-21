@@ -1,0 +1,434 @@
+; PLC1 - enable other setup and running PLCs
+Open PLC1 Clear
+Disable PLC2..31
+Enable PLC2
+Enable PLC3
+Enable PLC5
+Enable PLC11
+Disable PLC1
+Close
+
+
+
+
+; PLC2 - setup stepper motor and protection
+Open PLC2 Clear
+
+; Select axis 1 and set to stepper mode
+CMD"WX:$78014, $F8CDFE"
+I5111 = 50 * 8388608 / I10
+While (I5411 > 0) EndW
+
+; Clear errors on axis in stepper mode
+CMD"WX:$78014, $F84DFE"
+I5111 = 50 * 8388608 / I10
+While (I5411 > 0) EndW
+
+; Save and write protect channel from strobe word
+CMD"WX:$78014,$F00DFE"
+I5111 = 50 * 8388608 / I10
+While (I5111 > 0) EndW
+
+; Clear motor phasing search error bit
+M148=0
+
+Dis PLC2
+Close
+
+
+
+
+
+
+
+
+
+#define Mtr1AmpEna           M139   ; Motor#1 Amplifier Enable Status Bit
+Mtr1AmpEna->X:$B0,19                ; Suggested M-Variable
+
+#define Mtr1EncLoss          M180   ; Motor#1 Encoder Loss Status Bit
+Mtr1EncLoss->Y:$078807,0,1
+
+#define Mtr1EncLossIgnore   P300    ; Enable elcoder loss detection
+Mtr1EncLossIgnore = 0               ; Default is to not ignore Enc losses
+
+#define SysEncLoss          P301    ; System Global Encoder Loss Status (user defined)
+SysEncLoss=0                        ; Save and Set to 0 at download, normal operation
+                                    ; =1 System Encoder Loss Occurred
+
+OPEN PLC 3 CLEAR
+If (SysEncLoss = 0)                 ; No Loss yet, normal mode
+  If (Mtr1EncLoss = 0)              ; Loss detected
+    If (Mtr1EncLossIgnore = 0)      ; Ignore the loss?
+      CMD^K                         ; Encoder loss detected, not ignored, kill motors
+      I5111 = 50 * 8388608 / I10
+      While (I5411 > 0) EndW
+    EndIf                           
+    SysEncLoss = 1                  ; Set global encoder loss status fault
+  EndIf
+Else
+  If (Mtr1EncLoss = 1)
+    SysEncLoss = 0
+  EndIf
+EndIf
+
+If (SysEncLoss = 1)                 ; Global encoder loss status at fault?
+  If (Mtr1AmpEna = 1)               ; Trying to enable a motor?
+    If (Mtr1EncLossIgnore = 0)      ; Ignore the loss?
+      CMD^K                         ; Do not allow motor enable
+      I5111 = 50 * 8388608 / I10
+      While (I5411 > 0) EndW
+    EndIf
+  EndIf
+EndIf
+CLOSE
+
+
+
+
+P600 = 0        ; Set IN position
+P700 = 1900000  ; Set OUT position
+; PLC6 - motor jog to IN command
+Open PLC6 Clear
+If (Mtr1EncLoss = 1) and (M120 = 1)     ; Check encoder status and Home Complete
+  M172 = P600
+  CMD"#1J=*"
+  I5111 = 50 * 8388608 / I10
+  While (I5111 > 0) EndW
+EndIf
+Dis PLC6
+Close
+
+; PLC7 - motor jog to OUT command
+Open PLC7 Clear
+If (Mtr1EncLoss = 1) and (M120 = 1)     ; Check encoder status and Home Complete
+  M172 = P700
+  CMD"#1J=*"
+  I5111 = 50 * 8388608 / I10
+  While (I5111 > 0) EndW
+EndIf
+Dis PLC7
+Close
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; Homing PLC for Axis 1 (PLC 10)
+; 
+; This program will home an axis to either the positive or negative limit. The
+; homing program performs the following steps:
+; 1. Move to the limit switch being used as a reference.
+; 2. Perform a homing move away from the limit switch until it deactivates.
+; 3. Return to the starting position. 
+; 
+; Note that the direction set by the home velocity (Ixx23) is opposite to the
+; limit switch actually used for homing. This is because the homing movement
+; (Step 2 above) is away from the limit, with the controller looking for the
+; switch to deactivate to indicate the home position. This is summarised below:
+; Home at negative limit -> Positive home velocity
+; Home at positive limit -> Negative home velocity
+; 
+; Wayne Lewis 20140108
+; 
+; Macros:
+; - PLC: PLC number
+; - AXIS: motion axis
+; - TIMER: PMAC timer to use
+; - SERVO: first three digits of axis gate array (I7mn)
+
+; P variables
+; P1000 - homing state (homing, not homing)
+; P1001 - homing status (limit search, home search, post-home move)
+; P1002 - post-home move (0 = return to previous, 1 = stay at zero)
+
+; Initial configuration of state variables.
+; Homing State P Variable
+P1000 = 0
+
+; Homing Status P Variable
+P1001 = 0
+
+
+
+
+
+DEL GAT
+OPEN PLC10 CLEAR
+P1001 = 1
+
+;---- Configuring State ----
+P1000=1
+;Save high soft limits to P variables Pxx04..x19
+P1004=I113
+;Save the low soft limits to P variables Pxx20..x35
+P1020=I114
+;Save the home capture flags to P variables Pxx36..x51
+P1036=I12
+;Store value to use in moving off a flag in P variables Pxx52..x67
+P1052=10
+;Save the limit flags to P variables Pxx68..x83
+P1068=I124
+;Save the current position to P variables Pxx84..x99
+P1084=M162
+;Clear the soft limits
+I113=0
+I114=0
+
+if (P1001=1)
+
+	;---- FastSearch State ----
+  ; Move to the limit switch
+	if (P1001=1)
+		P1000=8
+		; Execute the move commands
+		M172=100000000*(-I123/ABS(I123))
+		cmd "#1J:*"
+		; Wait for the move to complete
+		I5111 = 20 * 8388608/I10 ; Small delay to start moving
+		while (I5111 > 0)
+		endw
+		I5111 = 600000 * 8388608/I10 ; Now start checking the conditions
+		while (M140=0) ; At least one motor should not be In Position
+		and (M142=0) ; No following errors should be set for any motor
+		and (I5111 > 0) ; Check for timeout
+		and (P1001 = 1) ; Check that we didn't abort
+		endw
+
+		; Check why we left the while loop
+		if (M142=1) ; If a motor hit a following error
+			P1001 = 4
+		endif
+		if (I5111<0 or I5111=0) ; If we timed out
+			P1001 = 3
+		endif
+	endif
+
+	;---- Store the difference between current pos and start pos ----
+	if (P1001=1)
+		P1086=(P1086-M162)/(I108*32)-(I126/16)
+	endif
+
+	;---- Homing State ----
+	if (P1001=1)
+		P1000=4
+    ; Set the capture flag correctly            
+    ; If homing direction is negative, we are homing using the positive
+    ; limit switch and vice versa.              
+    if (I123<0)
+      I13=1
+    else
+      I13=2
+    endif             
+		; Execute the move commands
+		I12=P1052
+		cmd "#1hm"
+		; Wait for the move to complete
+		I5111 = 20 * 8388608/I10 ; Small delay to start moving
+		while (I5111 > 0)
+		endw
+		I5111 = 600000 * 8388608/I10 ; Now start checking the conditions
+    P1005 = 0
+		while (M140=0) ; At least one motor should not be In Position
+		and (M142=0) ; No following errors should be set for any motor
+		and (P1005=0) ; Should not stop on position limit for selected motors
+		and (I5111 > 0) ; Check for timeout
+		and (P1001 = 1) ; Check that we didn't abort
+    if (I123 < 0 and M132 = 1)
+      P1005 = 1
+    endif
+    if (I123 > 0 and M131 = 1)
+      P1005 = 1
+    endif
+		endw
+		; Check why we left the while loop
+		if (M142=1) ; If a motor hit a following error
+			P1001 = 4
+		endif
+		if (M130=1) ; If a motor hit a limit
+			P1001 = 5
+		endif
+		if (I5111<0 or I5111=0) ; If we timed out
+			P1001 = 3
+		endif
+	endif
+
+	;---- Check if all motors have homed ----
+	if (P1001=1)
+	and (M145=0)
+		P1001=6
+	endif
+
+	;---- PostHomeMove State ----
+	if (P1001=1)
+    ; Check the type of post-home move
+    if (P1002 = 0)
+      P1000=5
+      ; Execute the move commands
+      M172=P1084/(I108*32)
+      cmd "#1J=*"
+      ; Wait for the move to complete
+      I5111 = 20 * 8388608/I10 ; Small delay to start moving
+      while (I5111 > 0)
+      endw
+      I5111 = 600000 * 8388608/I10 ; Now start checking the conditions
+      while (M140=0) ; At least one motor should not be In Position
+      and (M142=0) ; No following errors should be set for any motor
+      and (M130=0) ; Should not stop on position limit for selected motors
+      and (I5111 > 0) ; Check for timeout
+      and (P1001 = 1) ; Check that we didn't abort
+      endw
+      ; Check why we left the while loop
+      if (M142=1) ; If a motor hit a following error
+        P1001 = 4
+      endif
+      if (M130=1) ; If a motor hit a limit
+        P1001 = 5
+      endif
+      if (I5111<0 or I5111=0) ; If we timed out
+        P1001 = 3
+      endif
+    endif
+	endif
+
+endif
+
+;---- Done ----
+if (P1001 = 1)
+	;If we've got this far without failing, set status and state done
+	P1001=0
+	P1000=7
+endif
+
+;---- Tidy Up ----
+;Stop all motors if they don't have a following error
+if (M142=0)
+	cmd "#1J/"
+endif
+;Restore the high soft limits from P variables Pxx04..x19
+I113=P1004
+;Restore the low soft limits from P variables Pxx20..x35
+I114=P1020
+;Restore the home capture flags from P variables Pxx36..x51
+I12=P1036
+;Restore the limit flags to P variables Pxx68..x83
+I124=P1068
+
+DISABLE PLC10
+CLOSE
+
+
+
+
+
+
+
+
+
+;####################################################
+; Calculation of CPU load for a Turbo PMAC
+;
+; Ronaldo Mercado 2009-04-14
+; Mostly copied from "Turbo SRM.pdf" [1] 
+; Adjusted P variables to be in the P5xx range as per 
+; "PMAC Rules and Guidelines" [2]
+; Modified original formula for end result P575, 
+; to reflect a first order filter with alpha=1/16 (1/P576)
+;
+; [1] http://www.deltatau.com/fmenu/TURBO%20SRM.PDF page 17 (35 of 795)
+; [2] http://www.cs.diamond.ac.uk/cgi-bin/wiki.cgi/PMAC_PLC_Rules_and_Guidelines 
+;
+; Macros:
+; - PLC: plc number
+;
+; Result stored in
+;  P575
+; Uses variables 
+;  P567..576
+;####################################################
+
+P570=4 ; 4 phase interrupts per servo interrupt
+P576=16 ; Length of filter for averaging duty cycle
+
+OPEN PLC 5 
+CLEAR
+
+    P571=M71/M70 ; Phase task duty cycle
+    P569=INT(M72/M70) ; # of times phase interrupted servo
+    P572=(M72-P569*M71)/(M70*P570) ; Servo task duty cycle
+    P568=INT(M73/M70) ; # of times phase interrupted RTI
+    P567=INT(M73/(M70*P570)) ; # of times servo interrupted RTI
+    P573=(M73-P568*M71-P567*(M72-P569*M71))/(M70*P570*(I8+1))
+
+    ; RTI task duty cycle
+    P574=P571+P572+P573 ; Latest total foreground duty cycle
+    P575=(P574+(P576-1)*P575)/P576 ; Averaged total foreground duty cycle
+
+    ; Also use this PLC to report all PLC, GPIO and motion program status
+    P580 = 32768
+    P581 = 0
+    P582 = 0 ; PLC 0-15
+    P583 = 0 ; PLC 16-31
+    P584 = 0 ; GPIO inputs
+    P585 = 0 ; GPIO outputs
+    P586 = 0 ; Motion programs
+
+    WHILE (P581 < 16)
+      ; PLCS 0-15
+      P582=P582 + P580 * (-1 * M(5000+P581) + 1)
+      ; PLCS 16-31
+      P583=P583 + P580 * (-1 * M(5016+P581) + 1)
+      ; GPIO inputs
+      P584=P584 + P580 * M(0+P581)
+      ; GPIO outputs
+      IF (P581 < 8)
+        P585 = P585 + P580 * M(32+P581)
+      ENDIF
+      ; Motion programs
+      P586 = P586 + P580 * M(5180+100*P581)
+
+      ; Update counters
+      P580 = P580 / 2
+      P581 = P581 + 1
+    ENDW
+
+    ; Take snapshot of PLC status for reporting to EPICS
+    P592 = P582 ; PLC 0-15
+    P593 = P583 ; PLC 16-31
+    P594 = P584 ; GPIO inputs
+    P595 = P585 ; GPIO outputs
+    P596 = P586 ; Motion programs
+
+CLOSE
+
+
+
+
+
+
+
+
+
+Open PLC11 Clear
+; If a beampipe sensor is hit kill any attempted motion
+If (M4 = 0) or (M5 = 0) or (M6 = 0) or (M7 = 0)
+  If (Mtr1AmpEna = 1)
+    CMD^K
+  EndIf
+EndIf
+Close
