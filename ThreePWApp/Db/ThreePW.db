@@ -81,17 +81,17 @@ record(calc, "$(SYS){$(DEV)}BeamPipeSwitchAny") {
 record(ai, "$(SYS){$(DEV)}EncoderLoss") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(P2001) $(PORT)")
+  field(INP, "@pmac.proto getVar(P301) $(PORT)")
 }
 
 record(ai, "$(SYS){$(DEV)}EncoderLossOverride2") {
   field(DTYP, "stream")
   field(SCAN, "1 second")
-  field(INP, "@pmac.proto getVar(P2000) $(PORT)")
+  field(INP, "@pmac.proto getVar(P300) $(PORT)")
 }
 record(ai, "$(SYS){$(DEV)}EncoderLossOverride") {
   field(DTYP, "stream")
-  field(INP, "@pmac.proto setVar(P2000,1) $(PORT)")
+  field(INP, "@pmac.proto setVar(P300,1) $(PORT)")
 }
 
 
